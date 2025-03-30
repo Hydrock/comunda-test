@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Заявка</title>
+</head>
+
+<body>
+    <h1>Подать заявку</h1>
+    <form id="application-form">
+        <label for="name">Имя заявителя:</label>
+        <input type="text" id="name" name="name" required>
+        <button type="submit">Отправить</button>
+    </form>
+
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        document.getElementById('application-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+
+            const resBlock = document.getElementById('result');
+            resBlock.innerHTML = "Отправка...";
+
+            try {
+                const response = await fetch('/start-process', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resBlock.innerHTML = `Процесс запущен! ID: ${data.id}`;
+                } else {
+                    resBlock.innerHTML = "Ошибка запуска процесса";
+                }
+            } catch (err) {
+                resBlock.innerHTML = "Ошибка соединения";
+            }
+        });
+    </script>
+</body>
+
+</html>
